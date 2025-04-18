@@ -1,3 +1,4 @@
+"use client";
 import { ASFLogo } from "./ASFLogo";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -9,8 +10,9 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { usePathname } from "next/navigation";
 
-export function ASFNav() {
+function NavComponent() {
     return (
         <nav className="w-full flex justify-between p-8">
             {/* @ts-ignore */}
@@ -43,4 +45,10 @@ export function ASFNav() {
             </DropdownMenu>
         </nav>
     );
+}
+
+export function ASFNav({ isVisible }: { isVisible: boolean }) {
+    const pathname = usePathname();
+    const hideNavbar = ["/login", "/register", "/dashboard"].includes(pathname);
+    return <NavComponent />;
 }

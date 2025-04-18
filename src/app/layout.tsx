@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { ASFNav } from "@/components/ui/tasf_components/ASFNav";
 import { Geist, Geist_Mono } from "next/font/google";
+
 import "@/app/globals.css";
 
 const geistSans = Geist({
@@ -25,10 +26,10 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en">
-            <ASFNav />
             <body
-                className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+                className={`${geistSans.variable} ${geistMono.variable} antialiased mx-auto max-w-[1440px]`}
             >
+                <ASFNav />
                 {children}
             </body>
         </html>
