@@ -21,6 +21,7 @@ import {
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
+import { login } from "./actions";
 
 const formSchema = z.object({
     email: z.string().email({ message: "Invalid email address" }),
@@ -43,7 +44,10 @@ function ProfileForm() {
     function onSubmit(values: z.infer<typeof formSchema>) {
         // Do something with the form values.
         // ✅ This will be type-safe and validated.
-        console.log(values);
+        const formData = new FormData();
+        formData.set("email", values.email);
+        formData.set("password", values.password);
+        login(formData);
     }
 
     return (

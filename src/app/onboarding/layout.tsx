@@ -7,9 +7,5 @@ export default function OnboardingLayout({
 }: {
     children: ReactNode;
 }) {
-    return (
-        <>
-            <section>{children}</section>
-        </>
-    );
+    return <section>{children}</section>;
 }
