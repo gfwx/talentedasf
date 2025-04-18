@@ -12,9 +12,9 @@ import {
 
 export function ASFNav() {
     return (
-        <nav className="w-full flex justify-between m-4">
+        <nav className="w-full flex justify-between p-8">
             {/* @ts-ignore */}
-            <ASFLogo size={10} />
+            <ASFLogo size={60} />
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                     <Avatar>

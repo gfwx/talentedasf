@@ -107,7 +107,7 @@ export default function OnboardingPage() {
         e.preventDefault();
         if (isStepValid()) {
             console.log("Form Data:", formData);
-            router.push("/dashboard");
+            router.push("/");
         }
     };
 

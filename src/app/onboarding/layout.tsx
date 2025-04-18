@@ -9,9 +9,6 @@ export default function OnboardingLayout({
 }) {
     return (
         <>
-            <nav className="w-full p-8 flex justify-center">
-                <ASFLogo size={100} />
-            </nav>
             <section>{children}</section>
         </>
     );
