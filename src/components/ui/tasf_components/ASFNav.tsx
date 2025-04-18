@@ -1,6 +1,7 @@
-"use client";
 import { ASFLogo } from "./ASFLogo";
+import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { signOutAction } from "@/app/actions";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -10,7 +11,6 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { usePathname } from "next/navigation";
 
 function NavComponent() {
     return (
@@ -40,7 +40,14 @@ function NavComponent() {
                         <DropdownMenuItem>Support</DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem className="bg-red-400 text-white">
-                            Log out
+                            <form action={signOutAction}>
+                                <button
+                                    type="submit"
+                                    className="cursor-pointer"
+                                >
+                                    Sign out
+                                </button>
+                            </form>
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
@@ -50,12 +57,13 @@ function NavComponent() {
 }
 
 export function ASFNav() {
-    const pathname = usePathname();
-    const hiddenRoutes = ["/onboarding", "/login"];
-
-    if (hiddenRoutes.includes(pathname)) {
-        return null;
-    }
+    const hiddenRoutes = [
+        "/onboarding",
+        "/sign-in",
+        "/sign-up",
+        "/auth",
+        "/error",
+    ];
 
     return <NavComponent />;
 }
