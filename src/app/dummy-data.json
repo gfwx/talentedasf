@@ -1,0 +1,72 @@
+[
+    {
+        "uuid": "0309c921-3645-4bb4-8604-91903f91db28",
+        "nationality": "Indian",
+        "sponsorship_goal": 15000.0,
+        "sponsorship_current": 12000.0,
+        "socials": {
+            "instagram": "https://instagram.com/driver_one",
+            "twitter": "https://twitter.com/driver_one"
+        },
+        "bio": "Upcoming karting talent with multiple podium finishes in national championships.",
+        "highest_level": "National Karting Championship",
+        "career_highlights": "2nd place in the 2024 Meco FMSCI Championship.",
+        "username": "driver_one"
+    },
+    {
+        "uuid": "d2f79f66-d653-40e0-a1af-47240b2801b9",
+        "nationality": "Singaporean",
+        "sponsorship_goal": 25000.0,
+        "sponsorship_current": 18000.0,
+        "socials": {
+            "instagram": "https://instagram.com/racer_sg",
+            "twitter": "https://twitter.com/racer_sg"
+        },
+        "bio": "Aggressive driver with international racing exposure.",
+        "highest_level": "Asia Karting Open Championship",
+        "career_highlights": "Winner of the AKOC Junior Category in 2023.",
+        "username": "racer_sg"
+    },
+    {
+        "uuid": "81b6a84d-3060-4a4e-a275-75ea675abaf3",
+        "nationality": "Thai",
+        "sponsorship_goal": 12000.0,
+        "sponsorship_current": 9000.0,
+        "socials": {
+            "instagram": "https://instagram.com/thai_speedster",
+            "twitter": "https://twitter.com/thai_speedster"
+        },
+        "bio": "Disciplined and consistent performer on the karting circuit.",
+        "highest_level": "Rotax Max Challenge Thailand",
+        "career_highlights": "Top 5 overall in 2023 Rotax Championship.",
+        "username": "thai_speedster"
+    },
+    {
+        "uuid": "4e5dbc03-6f2f-435c-b813-da7eed28fd56",
+        "nationality": "Malaysian",
+        "sponsorship_goal": 18000.0,
+        "sponsorship_current": 15000.0,
+        "socials": {
+            "instagram": "https://instagram.com/malaysia_racer",
+            "twitter": "https://twitter.com/malaysia_racer"
+        },
+        "bio": "Versatile driver moving from karting to Formula 4.",
+        "highest_level": "F4 SEA Championship",
+        "career_highlights": "Best rookie in F4 SEA 2024 season.",
+        "username": "malaysia_racer"
+    },
+    {
+        "uuid": "525efa14-5da6-4961-99f3-7b9448884834",
+        "nationality": "Indonesian",
+        "sponsorship_goal": 20000.0,
+        "sponsorship_current": 17000.0,
+        "socials": {
+            "instagram": "https://instagram.com/indo_driver",
+            "twitter": "https://twitter.com/indo_driver"
+        },
+        "bio": "From local karting to representing Indonesia in regional races.",
+        "highest_level": "ASEAN Karting Series",
+        "career_highlights": "Represented Indonesia at the FIA Karting Academy Trophy.",
+        "username": "indo_driver"
+    }
+]
