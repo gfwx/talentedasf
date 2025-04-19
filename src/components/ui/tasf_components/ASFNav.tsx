@@ -1,7 +1,7 @@
 import { ASFLogo } from "./ASFLogo";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { signOutAction } from "@/app/actions";
+import { signOut } from "@/app/login/actions";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -40,12 +40,12 @@ function NavComponent() {
                         <DropdownMenuItem>Support</DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem className="bg-red-400 text-white">
-                            <form action={signOutAction}>
+                            <form action={signOut}>
                                 <button
                                     type="submit"
                                     className="cursor-pointer"
                                 >
-                                    Sign out
+                                    Sign Out
                                 </button>
                             </form>
                         </DropdownMenuItem>

@@ -1,6 +1,5 @@
 "use client";
 
-import { LoginForm } from "@/components/login-form";
 import { Mail } from "lucide-react";
 import loginSplash from "@/app/static/images/login_splash.svg";
 import Image from "next/image";
@@ -31,7 +30,6 @@ const formSchema = z.object({
 });
 
 function ProfileForm() {
-    // 1. Define your form.
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -40,10 +38,7 @@ function ProfileForm() {
         },
     });
 
-    // 2. Define a submit handler.
     function onSubmit(values: z.infer<typeof formSchema>) {
-        // Do something with the form values.
-        // ✅ This will be type-safe and validated.
         const formData = new FormData();
         formData.set("email", values.email);
         formData.set("password", values.password);
