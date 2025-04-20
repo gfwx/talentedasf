@@ -1,3 +1,4 @@
+"use client";
 import {
     Card,
     CardContent,
@@ -11,17 +12,27 @@ import { useState, useRef } from "react";
 
 import Image from "next/image";
 
-export function ASFCard(
-    fullName: string,
-    athleteType: string,
-    imgUrl: string,
-    sponsorshipGoal: number,
-    sponsorshipCurrent: number,
-    competingSport: string,
-    nationality: string,
-    popularityScore: number,
-    athleteSlug: string
-) {
+export function ASFCard({
+    fullName,
+    athleteType,
+    imgUrl,
+    sponsorshipGoal,
+    sponsorshipCurrent,
+    competingSport,
+    nationality,
+    popularityScore,
+    athleteSlug,
+}: {
+    fullName: string;
+    athleteType: string;
+    imgUrl: string;
+    sponsorshipGoal: number;
+    sponsorshipCurrent: number;
+    competingSport: string;
+    nationality: string;
+    popularityScore: number;
+    athleteSlug: string;
+}) {
     const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
     const cardRef = useRef<HTMLDivElement>(null);
 
@@ -68,18 +79,18 @@ export function ASFCard(
                     </CardHeader>
                     <CardContent>
                         <h1 className="font-bold tracking-tighter uppercase text-lg">
-                            An unusually long name
+                            {fullName}
                         </h1>
                         <h3 className="font-light tracking-tight">
-                            Minimized Title
+                            {athleteType}
                         </h3>
-                        <div>Nationality</div>
+                        <div>{nationality}</div>
                     </CardContent>
                     <CardFooter className="flex flex-col items-start">
                         <div>Sponsorship Goal</div>
                         <div className="flex justify-between w-full">
-                            <div>LowerLimit</div>
-                            <div>UpperLimit</div>
+                            <div>{sponsorshipCurrent}</div>
+                            <div>{sponsorshipGoal}</div>
                         </div>
                     </CardFooter>
                 </Card>

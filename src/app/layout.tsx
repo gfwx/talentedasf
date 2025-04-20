@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { ASFNav } from "@/components/ui/tasf_components/ASFNav";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ClientProvider } from "@/lib/client-provider";
+import { createClient } from "@/utils/supabase/server";
 
 import "@/app/globals.css";
-import { useEffect } from "react";
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -21,18 +21,23 @@ export const metadata: Metadata = {
     description: "The next generation athlete sponsorship tool.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
     children,
 }: Readonly<{
     children: React.ReactNode;
 }>) {
+    const supabase = await createClient();
+    const {
+        data: { user },
+    } = await supabase.auth.getUser();
+
     return (
         <html lang="en">
             <body
                 className={`${geistSans.variable} ${geistMono.variable} antialiased mx-auto`}
             >
                 <ClientProvider>
-                    <ASFNav />
+                    {user && <ASFNav userName={user.user_metadata.name} />}
                     {children}
                 </ClientProvider>
             </body>

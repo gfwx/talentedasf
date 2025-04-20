@@ -4,10 +4,15 @@ import { encodedRedirect } from "@/utils/utils";
 import { createClient } from "@/utils/supabase/server";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { SupabaseClient } from "@supabase/supabase-js";
 
 export const signUpAction = async (formData: FormData) => {
     const email = formData.get("email")?.toString();
     const password = formData.get("password")?.toString();
+    const fullName =
+        formData.get("firstName")?.toString() +
+        " " +
+        formData.get("lastName")?.toString();
     const supabase = await createClient();
     const origin = (await headers()).get("origin");
 
@@ -19,11 +24,14 @@ export const signUpAction = async (formData: FormData) => {
         );
     }
 
-    const { error } = await supabase.auth.signUp({
+    const { error, data } = await supabase.auth.signUp({
         email,
         password,
         options: {
             emailRedirectTo: `${origin}/auth/callback`,
+            data: {
+                name: fullName,
+            },
         },
     });
 
@@ -31,11 +39,20 @@ export const signUpAction = async (formData: FormData) => {
         console.error(error.code + " " + error.message);
         return encodedRedirect("error", "/sign-up", error.message);
     } else {
-        return encodedRedirect(
-            "success",
-            "/sign-in",
-            "Thanks for signing up! Please check your email for a verification link."
-        );
+        let user = data.user;
+        if (!user)
+            return encodedRedirect("error", "/sign-up", "User signup failed.");
+        const { error } = await supabase.from("users").insert({
+            id: user.id,
+            full_name: user.user_metadata.full_name ?? "John Doe",
+            email_id: user.email,
+            user_role: "user",
+            is_active: true,
+        });
+
+        console.log(error);
+
+        return encodedRedirect("success", "/onboarding", "");
     }
 };
 
@@ -53,7 +70,7 @@ export const signInAction = async (formData: FormData) => {
         return encodedRedirect("error", "/sign-in", error.message);
     }
 
-    return redirect("/protected");
+    return redirect("/");
 };
 
 export const forgotPasswordAction = async (formData: FormData) => {
@@ -131,8 +148,106 @@ export const resetPasswordAction = async (formData: FormData) => {
     encodedRedirect("success", "/protected/reset-password", "Password updated");
 };
 
+export type OnboardingFormData = {
+    sport: string;
+    experience: string;
+    level: string;
+    otherActivity: string;
+    name: string;
+    age: string;
+    gender: string;
+    nationality: string;
+    languages: string;
+    highestLevel: string;
+    photo: File | null;
+    sponsorship_current: number;
+    sponsorship_goal: number;
+    username: string;
+    bio: string;
+};
+
 export const signOutAction = async () => {
     const supabase = await createClient();
     await supabase.auth.signOut();
     return redirect("/sign-in");
+};
+
+const validateIfUserExists = async (supabase: SupabaseClient) => {
+    const { data, error } = await supabase.auth.getUser();
+    return error || !data.user ? false : true;
+};
+
+export const finishOnboarding = async (
+    onboardingFormData: OnboardingFormData
+) => {
+    const res = onboardingFormData;
+    const supabase = await createClient();
+    if (!validateIfUserExists) {
+        console.log("Something went wrong.");
+        return redirect("/error");
+    }
+
+    const user = (await supabase.auth.getUser()).data.user ?? null;
+
+    if (user) {
+        let storageUploadSuccess = true;
+        const path = `pfp/${user.id}/pfp.png`;
+        const { data, error } = await supabase.storage.createBucket("avatars", {
+            public: false,
+            allowedMimeTypes: ["image/png"],
+            fileSizeLimit: 1024,
+        });
+        if (res.photo) {
+            const { error } = await supabase.storage
+                .from("pfp")
+                .upload(path, res.photo, {
+                    cacheControl: "3600",
+                    upsert: true,
+                });
+
+            if (error) {
+                storageUploadSuccess = false;
+                console.log(`Upload error: ${error.message}`);
+            }
+        }
+
+        await supabase.from("athletes").insert({
+            uuid: user.id,
+            nationality: res.nationality,
+            sponsorship_goal: res.sponsorship_goal,
+            sponsorship_current: res.sponsorship_current,
+            bio: res.bio,
+            highest_level: res.highestLevel,
+            username: res.username,
+            age: res.age,
+            gender: res.gender,
+            photo: storageUploadSuccess ? null : path,
+            quick_bio: {
+                sport: res.sport,
+                experience: res.experience,
+                level: res.level,
+                other_activity: res.otherActivity,
+            },
+        });
+    }
+};
+
+export const doSomething = async () => {
+    console.log("Do something!");
+};
+
+export const completeUserCreation = async () => {
+    const supabase = await createClient();
+    const { data, error } = await supabase.auth.getUser();
+    const { user } = data;
+
+    if (user) {
+        await supabase.from("users").insert({
+            id: user.id,
+            full_name: user.user_metadata.fullName,
+            email_id: user.email,
+            user_role: "user",
+            is_active: true,
+        });
+    }
 };

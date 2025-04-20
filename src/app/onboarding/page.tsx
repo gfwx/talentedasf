@@ -1,5 +1,6 @@
 "use client";
 
+import { SubmitButton } from "@/components/submit-button";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -9,26 +10,17 @@ import { Card, CardContent } from "@/components/ui/card";
 import { motion } from "framer-motion";
 import { Pencil } from "lucide-react";
 import Image from "next/image";
-
-type FormData = {
-    sport: string;
-    experience: string;
-    level: string;
-    otherActivity: string;
-    name: string;
-    age: string;
-    gender: string;
-    nationality: string;
-    languages: string;
-    highestLevel: string;
-    photo?: File;
-};
+import {
+    doSomething,
+    finishOnboarding,
+    type OnboardingFormData,
+} from "../actions";
 
 export default function OnboardingPage() {
     const router = useRouter();
     const [step, setStep] = useState(1);
     const [photoPreview, setPhotoPreview] = useState<string>("");
-    const [formData, setFormData] = useState<FormData>({
+    const [formData, setFormData] = useState<OnboardingFormData>({
         sport: "",
         experience: "",
         level: "",
@@ -39,12 +31,20 @@ export default function OnboardingPage() {
         nationality: "",
         languages: "",
         highestLevel: "",
+        photo: null,
+        username: "",
+        sponsorship_current: 0,
+        sponsorship_goal: 0,
+        bio: "",
     });
 
-    const totalSteps = 5;
+    const totalSteps = 6;
     const progress = (step / totalSteps) * 100;
 
-    const handleInputChange = (field: keyof FormData, value: string) => {
+    const handleInputChange = (
+        field: keyof OnboardingFormData,
+        value: string
+    ) => {
         setFormData((prev) => ({
             ...prev,
             [field]: value,
@@ -86,6 +86,14 @@ export default function OnboardingPage() {
                     formData.languages.trim() !== "" &&
                     formData.highestLevel.trim() !== ""
                 );
+
+            case 6:
+                return (
+                    formData.bio.trim() !== "" &&
+                    formData.username.trim() !== "" &&
+                    formData.sponsorship_goal !== 0
+                );
+
             default:
                 return false;
         }
@@ -103,31 +111,31 @@ export default function OnboardingPage() {
         }
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
+    const handleSubmit = async (fdata: FormData) => {
         if (isStepValid()) {
-            console.log("Form Data:", formData);
+            await finishOnboarding(formData);
             router.push("/");
+            // console.log("Form Data:", formData);
         }
     };
 
     return (
         <div className="h-full flex flex-col items-center justify-center p-4">
-            <div className="w-full max-w-2xl space-y-8">
+            <form className="w-full max-w-2xl space-y-8">
                 <div className="space-y-2 text-center">
-                    {step < 5 ? (
+                    {step < 6 ? (
                         <>
                             <h1 className="text-3xl font-bold">
                                 Before we move forward,
                             </h1>
                             <h2 className="text-2xl">
-                                Let's get to know you a bit better.
+                                Let's complete your profile.
                             </h2>
                         </>
                     ) : (
                         <>
                             <h1 className="text-3xl font-bold">
-                                Great job! Onto the next step.
+                                We're almost done!
                             </h1>
                         </>
                     )}
@@ -140,12 +148,16 @@ export default function OnboardingPage() {
                                 <h3 className="text-xl font-semibold">
                                     {step < 5
                                         ? "1. Give us a quick intro"
-                                        : "2. Basic Information"}
+                                        : step < 6
+                                          ? "2. Basic Information"
+                                          : "3. Finishing touches"}
                                 </h3>
                                 <p className="text-sm text-muted-foreground">
                                     {step < 5
                                         ? "Sum up you in 4 short questions. This will be displayed on your profile."
-                                        : "Information that will make up the foundations of your profile."}
+                                        : step < 6
+                                          ? "Information that will make up the foundations of your profile."
+                                          : "Information that will help sponsors understand you better."}
                                 </p>
                             </div>
 
@@ -255,10 +267,7 @@ export default function OnboardingPage() {
                                         animate={{ opacity: 1, x: 0 }}
                                         className="space-y-6"
                                     >
-                                        <form
-                                            onSubmit={handleSubmit}
-                                            className="space-y-6"
-                                        >
+                                        <div className="space-y-6">
                                             <div className="flex gap-6">
                                                 <div className="w-1/3">
                                                     <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center cursor-pointer relative h-[200px] overflow-hidden">
@@ -413,7 +422,67 @@ export default function OnboardingPage() {
                                                     />
                                                 </div>
                                             </div>
-                                        </form>
+                                        </div>
+                                    </motion.div>
+                                )}
+                                {step === 6 && (
+                                    <motion.div
+                                        initial={{ opacity: 0, x: 20 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        className="space-y-6"
+                                    >
+                                        <div className="space-y-6">
+                                            <div>
+                                                <Label htmlFor="username">
+                                                    "Create a username (not
+                                                    validated)
+                                                </Label>
+                                                <Input
+                                                    id="username"
+                                                    value={formData.username}
+                                                    onChange={(e) =>
+                                                        handleInputChange(
+                                                            "username",
+                                                            e.target.value
+                                                        )
+                                                    }
+                                                    required
+                                                />
+                                            </div>
+                                            <div>
+                                                <Label htmlFor="bio">Bio</Label>
+                                                <Input
+                                                    type="textarea"
+                                                    id="bio"
+                                                    value={formData.bio}
+                                                    onChange={(e) =>
+                                                        handleInputChange(
+                                                            "bio",
+                                                            e.target.value
+                                                        )
+                                                    }
+                                                    required
+                                                />
+                                            </div>
+                                            <div>
+                                                <Label htmlFor="sponsorship_goal">
+                                                    Sponsorship Goal
+                                                </Label>
+                                                <Input
+                                                    id="sponsorship_goal"
+                                                    value={
+                                                        formData.sponsorship_goal
+                                                    }
+                                                    onChange={(e) =>
+                                                        handleInputChange(
+                                                            "sponsorship_goal",
+                                                            e.target.value
+                                                        )
+                                                    }
+                                                    required
+                                                />
+                                            </div>
+                                        </div>
                                     </motion.div>
                                 )}
                             </div>
@@ -439,7 +508,7 @@ export default function OnboardingPage() {
                         >
                             Go back
                         </Button>
-                        {step < 5 ? (
+                        {step < 6 ? (
                             <Button
                                 onClick={handleNext}
                                 disabled={!isStepValid()}
@@ -447,16 +516,16 @@ export default function OnboardingPage() {
                                 Continue
                             </Button>
                         ) : (
-                            <Button
-                                onClick={handleSubmit}
+                            <SubmitButton
+                                formAction={handleSubmit}
                                 disabled={!isStepValid()}
                             >
                                 Submit
-                            </Button>
+                            </SubmitButton>
                         )}
                     </div>
                 </div>
-            </div>
+            </form>
         </div>
     );
 }

@@ -1,4 +1,3 @@
-// todo
 import { createContext, useState, ReactNode } from "react";
 
 type LayoutContextType = {

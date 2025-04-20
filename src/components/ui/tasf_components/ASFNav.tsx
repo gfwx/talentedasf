@@ -11,12 +11,15 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-function NavComponent() {
+function NavComponent({ userName }: { userName: string }) {
     return (
         <nav className="w-full flex p-8">
             {/* @ts-ignore */}
             <ASFLogo size={60} />
-            <div className="ml-auto">
+            <div className="ml-auto flex gap-4 items-center">
+                <p>
+                    Hello, <b>{userName}</b>!
+                </p>
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Avatar>
@@ -55,7 +58,7 @@ function NavComponent() {
     );
 }
 
-export function ASFNav() {
+export function ASFNav({ userName }: { userName: string }) {
     const hiddenRoutes = [
         "/onboarding",
         "/sign-in",
@@ -64,5 +67,5 @@ export function ASFNav() {
         "/error",
     ];
 
-    return <NavComponent />;
+    return <NavComponent userName={userName} />;
 }
