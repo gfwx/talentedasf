@@ -11,6 +11,7 @@ import { useState } from "react";
 
 export default function Home() {
     const data = useAthleteData();
+    console.log(data);
     const [filters, setFilters] = useState<FilterState>({
         nationality: "all",
         sponsorshipRange: "all",
@@ -59,8 +60,8 @@ export default function Home() {
     return (
         <main className="">
             <section className="mx-8">
-                <h1 className="text-4xl font-extrabold tracking-tight mb-8">
-                    TalentedASF Athletes
+                <h1 className="text-4xl font-black tracking-tighter mb-8">
+                    Talented <i>ASF</i> Athletes
                 </h1>
                 <ASFFilters
                     data={data}
@@ -70,7 +71,7 @@ export default function Home() {
                 <div className="flex flex-row gap-4 flex-wrap">
                     {filteredAthletes.map((athlete: dataFormat) => (
                         <ASFCard
-                            key={athlete.uuid}
+                            key={athlete.id}
                             fullName={athlete.name}
                             athleteType={athlete.highest_level}
                             imgUrl={athlete.photo}
@@ -80,6 +81,7 @@ export default function Home() {
                             nationality={athlete.nationality}
                             popularityScore={10}
                             athleteSlug={athlete.username}
+                            id={athlete.id}
                         />
                     ))}
                 </div>

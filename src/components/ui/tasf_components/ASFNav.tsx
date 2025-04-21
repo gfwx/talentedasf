@@ -1,4 +1,5 @@
 import { ASFLogo } from "./ASFLogo";
+import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { signOutAction } from "@/app/actions";
 import {
@@ -34,12 +35,19 @@ function NavComponent({ userName }: { userName: string }) {
                         <DropdownMenuLabel>My Account</DropdownMenuLabel>
                         <DropdownMenuSeparator />
                         <DropdownMenuGroup>
-                            <DropdownMenuItem>View Profile</DropdownMenuItem>
-                            <DropdownMenuItem>Settings</DropdownMenuItem>
+                            <DropdownMenuItem className="text-gray-400">
+                                View Profile
+                            </DropdownMenuItem>
+                            <DropdownMenuItem className="text-gray-400">
+                                Settings
+                            </DropdownMenuItem>
                         </DropdownMenuGroup>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem>GitHub</DropdownMenuItem>
-                        <DropdownMenuItem>Support</DropdownMenuItem>
+                        <DropdownMenuItem>
+                            <Link href="https://github.com/gfwx/talentedasf">
+                                GitHub (tASF)
+                            </Link>
+                        </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem className="bg-red-400 text-white">
                             <form action={signOutAction}>

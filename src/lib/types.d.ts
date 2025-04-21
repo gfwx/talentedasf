@@ -1,5 +1,5 @@
 export type dataFormat = {
-    uuid: string;
+    id: string;
     name: string;
     age: string;
     gender: string;
