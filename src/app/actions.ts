@@ -191,9 +191,9 @@ export const finishOnboarding = async (
 
     if (user) {
         let storageUploadSuccess = true;
-        const path = `pfp/${user.id}/pfp.png`;
-        const { data, error } = await supabase.storage.createBucket("avatars", {
-            public: false,
+        const path = `avatars/${user.id}/pfp.png`;
+        await supabase.storage.createBucket("avatars", {
+            public: true,
             allowedMimeTypes: ["image/png"],
             fileSizeLimit: 1024,
         });
@@ -211,8 +211,8 @@ export const finishOnboarding = async (
             }
         }
 
-        await supabase.from("athletes").insert({
-            uuid: user.id,
+        const { data, error } = await supabase.from("athletes").insert({
+            id: user.id,
             nationality: res.nationality,
             sponsorship_goal: res.sponsorship_goal,
             sponsorship_current: res.sponsorship_current,
@@ -229,6 +229,13 @@ export const finishOnboarding = async (
                 other_activity: res.otherActivity,
             },
         });
+
+        if (error) {
+            console.log(error.message);
+        }
+        return data;
+    } else {
+        console.log("User error");
     }
 };
 

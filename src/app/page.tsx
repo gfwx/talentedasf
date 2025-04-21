@@ -1,21 +1,26 @@
 "use client";
+
 import data from "@/app/dummy-data.json";
 import { ASFCard } from "@/components/ui/tasf_components/ASFCard";
+import { useAthleteData } from "@/lib/datactx";
+import { dataFormat } from "@/lib/types";
 
 export default function Home() {
-    const athleteCards = data.map((athlete: any) => {
+    const data = useAthleteData();
+    console.log(data);
+    const athleteCards = data.map((athlete: dataFormat) => {
         return (
             <ASFCard
                 key={athlete.uuid}
-                fullName={athlete.username}
-                athleteType={athlete?.athleteType}
-                imgUrl={athlete?.imgUrl}
+                fullName={athlete.name}
+                athleteType={athlete.highest_level}
+                imgUrl={athlete.photo}
                 sponsorshipGoal={athlete["sponsorship_goal"]}
                 sponsorshipCurrent={athlete["sponsorship_current"]}
-                competingSport={athlete.competingSport}
+                competingSport={athlete.quick_bio.sport}
                 nationality={athlete.nationality}
-                popularityScore={athlete.popularityScore}
-                athleteSlug={athlete.athleteSlug}
+                popularityScore={10}
+                athleteSlug={athlete.username}
             />
         );
     });

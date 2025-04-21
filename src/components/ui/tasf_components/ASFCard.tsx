@@ -25,7 +25,7 @@ export function ASFCard({
 }: {
     fullName: string;
     athleteType: string;
-    imgUrl: string;
+    imgUrl: string | null;
     sponsorshipGoal: number;
     sponsorshipCurrent: number;
     competingSport: string;

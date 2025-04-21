@@ -115,7 +115,6 @@ export default function OnboardingPage() {
         if (isStepValid()) {
             await finishOnboarding(formData);
             router.push("/");
-            // console.log("Form Data:", formData);
         }
     };
 
