@@ -1,6 +1,4 @@
-import { ASFLogo } from "@/components/ui/tasf_components/ASFLogo";
-import { useState, ReactNode } from "react";
-import { createServerClientWrapper } from "@/lib/server-provider";
+import { ReactNode } from "react";
 
 export default async function OnboardingLayout({
     children,
