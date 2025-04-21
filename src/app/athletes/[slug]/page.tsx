@@ -67,7 +67,9 @@ export default async function AthletePage({ params }: PageProps) {
                     </div>
                     <div className="flex flex-col">
                         <p className="text-2xl font-bold">But also,</p>
-                        <p className="text-md">{athlete.quick_bio.level}</p>
+                        <p className="text-md">
+                            {athlete.quick_bio.other_activity}
+                        </p>
                     </div>
                 </div>
 
