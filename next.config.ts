@@ -10,6 +10,12 @@ const nextConfig: NextConfig = {
 };
 
 module.exports = {
+    images: {
+        // Stupidest shit ever
+        remotePatterns: [
+            new URL("https://eyluvqxrqfihmhxojklw.supabase.co/**"),
+        ],
+    },
     experimental: {
         serverActions: {
             bodySizeLimit: "5mb",

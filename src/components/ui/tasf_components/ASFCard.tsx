@@ -36,6 +36,9 @@ export function ASFCard({
     const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
     const cardRef = useRef<HTMLDivElement>(null);
 
+    // WARNING: TERRIBLE PRACTISE!
+    imgUrl = `https://eyluvqxrqfihmhxojklw.supabase.co/storage/v1/object/public/pfp/${imgUrl}`;
+
     const handleMouseMove = (e: React.MouseEvent) => {
         const rect = cardRef.current?.getBoundingClientRect();
         if (!rect) return;
@@ -70,7 +73,7 @@ export function ASFCard({
                 <Card className="w-[300px] h-fit min-h-[400px] cursor-pointer">
                     <CardHeader>
                         <Image
-                            src={pfp}
+                            src={imgUrl}
                             width={500}
                             height={300}
                             alt="Athlete profile picture"

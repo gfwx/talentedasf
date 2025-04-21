@@ -15,10 +15,7 @@ const getUsersFromDatabase = async () => {
 
 export const getAthletesFromDatabase = async () => {
     const supabase = await createClient();
-
-    const { data, error } = await supabase
-        .from("athletes")
-        .select("*, users(full_name)");
+    const { data, error } = await supabase.from("athletes").select("*");
 
     if (error) {
         console.log(`Error while fetching data: ${error.message}`);
