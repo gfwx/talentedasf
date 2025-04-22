@@ -3,10 +3,10 @@
 import { Message } from "@/components/form-message";
 import Image from "next/image";
 import loginSplash from "@/app/static/images/login_splash.svg";
-import Login from "@/utils/auth-utils/LogIn";
+import Login from "../../../utils/auth-utils/LogIn";
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import Signup from "@/utils/auth-utils/SignUp";
+import Signup from "../../../utils/auth-utils/SignUp";
 import { useSearchParams } from "next/navigation";
 
 export default function Page() {
@@ -42,9 +42,7 @@ export default function Page() {
         )}
 
         <p className="text-sm text-foreground">
-          {isSigningUp
-            ? "Already have an account?"
-            : "Don't have an account?"}
+          {isSigningUp ? "Already have an account?" : "Don't have an account?"}
           <Button
             className="text-foreground font-medium"
             variant={"link"}

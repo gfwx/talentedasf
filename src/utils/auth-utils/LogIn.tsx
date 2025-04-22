@@ -1,6 +1,6 @@
 "use client";
 
-import { signInAction } from "@/app/actions";
+import { signInAction } from "@/utils/auth-utils/actions";
 import { FormMessage, Message } from "@/components/form-message";
 import { SubmitButton } from "@/components/submit-button";
 import { Input } from "@/components/ui/input";
@@ -15,11 +15,7 @@ export default function Login(props: { searchParams: Message | null }) {
       <form className="flex-1 flex flex-col min-w-64">
         <div className="flex flex-col gap-2 [&>input]:mb-3 mt-8">
           <Label htmlFor="email">Email</Label>
-          <Input
-            name="email"
-            placeholder="you@example.com"
-            required
-          />
+          <Input name="email" placeholder="you@example.com" required />
           <div className="flex justify-between items-center">
             <Label htmlFor="password">Password</Label>
             <Link
@@ -35,10 +31,7 @@ export default function Login(props: { searchParams: Message | null }) {
             placeholder="Your password"
             required
           />
-          <SubmitButton
-            pendingText="Signing In..."
-            formAction={signInAction}
-          >
+          <SubmitButton pendingText="Signing In..." formAction={signInAction}>
             Sign in
           </SubmitButton>
 

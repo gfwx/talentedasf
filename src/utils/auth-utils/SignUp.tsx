@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { SubmitButton } from "@/components/submit-button";
 import React from "react";
-import { signUpAction } from "@/app/actions";
+import { signUpAction } from "@/utils/auth-utils/actions";
 
 export default function Signup(props: { searchParams: Message | null }) {
   const message = props.searchParams;
@@ -30,11 +30,7 @@ export default function Signup(props: { searchParams: Message | null }) {
           <Input name="lastName" placeholder="Doe" required />
 
           <Label htmlFor="email">Email</Label>
-          <Input
-            name="email"
-            placeholder="you@example.com"
-            required
-          />
+          <Input name="email" placeholder="you@example.com" required />
           <Label htmlFor="password">Password</Label>
           <Input
             type="password"
@@ -43,10 +39,7 @@ export default function Signup(props: { searchParams: Message | null }) {
             minLength={6}
             required
           />
-          <SubmitButton
-            formAction={signUpAction}
-            pendingText="Signing up..."
-          >
+          <SubmitButton formAction={signUpAction} pendingText="Signing up...">
             Sign up
           </SubmitButton>
 
