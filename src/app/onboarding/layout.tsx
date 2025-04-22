@@ -1,9 +1,9 @@
 import { ReactNode } from "react";
 
 export default async function OnboardingLayout({
-    children,
+  children,
 }: {
-    children: ReactNode;
+  children: ReactNode;
 }) {
-    return <section>{children}</section>;
+  return <section>{children}</section>;
 }

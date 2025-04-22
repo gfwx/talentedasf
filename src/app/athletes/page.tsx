@@ -1,3 +1,3 @@
 export default function Page() {
-    return <div>Invalid</div>;
+  return <div>Invalid Slug!</div>;
 }
