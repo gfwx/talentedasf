@@ -173,6 +173,18 @@ export const finishOnboarding = async (
   const user = (await supabase.auth.getUser()).data.user ?? null;
 
   if (user) {
+    // Update user display name
+    const { error: updateUserError } = await supabase.auth.updateUser({
+      data: {
+        full_name: res.name,
+        name: res.name
+      }
+    });
+
+    if (updateUserError) {
+      console.log(`Failed to update user display name: ${updateUserError.message}`);
+    }
+
     let storageUploadSuccess = true;
     const path = `avatars/${user.id}/pfp.png`;
     if (res.photo) {

@@ -8,7 +8,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Toaster } from "@/components/ui/sonner";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 type QuickBio = {
   sport: string;
@@ -34,6 +35,7 @@ type ProfileData = {
 
 export default function ProfilePage() {
   const supabase = createClient();
+  const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [profileData, setProfileData] = useState<ProfileData | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -132,6 +134,18 @@ export default function ProfilePage() {
       }
     }
 
+    // Update user display name if full name has changed
+    const { error: updateUserError } = await supabase.auth.updateUser({
+      data: {
+        full_name: profileData.name,
+        name: profileData.name
+      }
+    });
+
+    if (updateUserError) {
+      console.error("Error updating user display name:", updateUserError);
+    }
+
     // Update profile data
     const { error } = await supabase
       .from("athletes")
@@ -140,6 +154,15 @@ export default function ProfilePage() {
         photo: photoPath,
       })
       .eq("id", profileData.id);
+
+    if (error) {
+      toast.error("Failed to update profile");
+      console.error("Error updating profile:", error);
+    } else {
+      toast.success("Profile updated successfully");
+      // Refresh the home page data
+      router.refresh();
+    }
 
     setLoading(false);
   };

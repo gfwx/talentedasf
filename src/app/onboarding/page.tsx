@@ -119,9 +119,21 @@ export default function OnboardingPage() {
     }
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (step < totalSteps) {
+        handleNext();
+      } else if (isStepValid()) {
+        const form = e.currentTarget.closest('form');
+        if (form) form.requestSubmit();
+      }
+    }
+  };
+
   return (
     <div className="h-full flex flex-col items-center justify-center p-4">
-      <form className="w-full max-w-2xl space-y-8">
+      <form className="w-full max-w-2xl space-y-8" onKeyDown={(e) => e.key === 'Enter' && e.preventDefault()}>
         <div className="space-y-2 text-center">
           {step < 6 ? (
             <>
@@ -181,6 +193,7 @@ export default function OnboardingPage() {
                           e.target.value
                         )
                       }
+                      onKeyDown={handleKeyDown}
                       required
                     />
                   </motion.div>
@@ -206,6 +219,7 @@ export default function OnboardingPage() {
                           e.target.value
                         )
                       }
+                      onKeyDown={handleKeyDown}
                       required
                     />
                   </motion.div>
@@ -231,6 +245,7 @@ export default function OnboardingPage() {
                           e.target.value
                         )
                       }
+                      onKeyDown={handleKeyDown}
                       required
                     />
                   </motion.div>
@@ -256,6 +271,7 @@ export default function OnboardingPage() {
                           e.target.value
                         )
                       }
+                      onKeyDown={handleKeyDown}
                       required
                     />
                   </motion.div>
@@ -320,6 +336,7 @@ export default function OnboardingPage() {
                                     .value
                                 )
                               }
+                              onKeyDown={handleKeyDown}
                               required
                             />
                           </div>
@@ -341,6 +358,7 @@ export default function OnboardingPage() {
                                       .value
                                   )
                                 }
+                                onKeyDown={handleKeyDown}
                                 required
                               />
                             </div>
@@ -360,6 +378,7 @@ export default function OnboardingPage() {
                                       .value
                                   )
                                 }
+                                onKeyDown={handleKeyDown}
                                 required
                               />
                             </div>
@@ -382,6 +401,7 @@ export default function OnboardingPage() {
                                 e.target.value
                               )
                             }
+                            onKeyDown={handleKeyDown}
                             required
                           />
                         </div>
@@ -400,6 +420,7 @@ export default function OnboardingPage() {
                                 e.target.value
                               )
                             }
+                            onKeyDown={handleKeyDown}
                             required
                           />
                         </div>
@@ -418,6 +439,7 @@ export default function OnboardingPage() {
                                 e.target.value
                               )
                             }
+                            onKeyDown={handleKeyDown}
                             required
                           />
                         </div>
@@ -446,6 +468,7 @@ export default function OnboardingPage() {
                               e.target.value
                             )
                           }
+                          onKeyDown={handleKeyDown}
                           required
                         />
                       </div>
@@ -461,6 +484,7 @@ export default function OnboardingPage() {
                               e.target.value
                             )
                           }
+                          onKeyDown={handleKeyDown}
                           required
                         />
                       </div>
@@ -479,6 +503,7 @@ export default function OnboardingPage() {
                               e.target.value
                             )
                           }
+                          onKeyDown={handleKeyDown}
                           required
                         />
                       </div>
@@ -505,6 +530,8 @@ export default function OnboardingPage() {
               variant="outline"
               onClick={handleBack}
               disabled={step === 1}
+              tabIndex={0}
+              type="button"
             >
               Go back
             </Button>
@@ -512,6 +539,8 @@ export default function OnboardingPage() {
               <Button
                 onClick={handleNext}
                 disabled={!isStepValid()}
+                tabIndex={0}
+                type="button"
               >
                 Continue
               </Button>
@@ -519,6 +548,7 @@ export default function OnboardingPage() {
               <SubmitButton
                 formAction={handleSubmit}
                 disabled={!isStepValid()}
+                tabIndex={0}
               >
                 Submit
               </SubmitButton>

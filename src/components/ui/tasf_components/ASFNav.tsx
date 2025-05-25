@@ -42,7 +42,11 @@ function NavComponent({ userName, isLoggedIn }: { userName: string, isLoggedIn: 
             </Avatar>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-56">
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
+            <DropdownMenuLabel>
+              <Link href="/profile" className="w-full">
+                Profile
+              </Link>
+            </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem className="text-gray-400">

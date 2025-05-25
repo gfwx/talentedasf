@@ -3,6 +3,7 @@ import { ASFNav } from "@/components/ui/tasf_components/ASFNav";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ClientProvider } from "@/lib/client-provider";
 import { createClient } from "@/utils/supabase/server";
+import { Toaster } from "sonner";
 
 import type { dataFormat } from "@/lib/types";
 
@@ -46,6 +47,7 @@ export default async function RootLayout({
           <AthleteProvider initialData={dashboardData}>
             {children}
           </AthleteProvider>
+          <Toaster position="top-right" />
         </ClientProvider>
       </body>
     </html>

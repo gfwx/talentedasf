@@ -24,3 +24,15 @@ export const getAthletesFromDatabase = async () => {
 
   return data;
 };
+
+export const getCurrentAthleteFromDatabase = async () => {
+  const supabase = await createClient();
+  const { data, error } = await supabase.from("athletes").select("*").single();
+
+  if (error) {
+    console.log(`Error while fetching data: ${error.message}`);
+    return null;
+  }
+
+  return data;
+};
