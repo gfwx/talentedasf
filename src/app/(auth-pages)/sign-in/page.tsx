@@ -32,8 +32,8 @@ export default function Page() {
   }, [searchParams]);
 
   return (
-    <div className="flex h-full items-center justify-between w-full mx-auto">
-      <Image src={loginSplash} alt={"TASF Logo"} />
+    <div className="flex h-[80%] items-center justify-between w-full mx-auto">
+      <Image src={loginSplash} alt={"TASF Logo"} className="h-[95vh]" />
       <section className="w-full flex flex-col gap-8 items-center">
         {isSigningUp ? (
           <Signup searchParams={message} />

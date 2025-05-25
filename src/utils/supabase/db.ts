@@ -5,7 +5,7 @@ const getUsersFromDatabase = async () => {
 
   const { data, error } = await supabase
     .from("users")
-    .select("*, users(fuLL_name)");
+    .select("*, users(full_name)");
 
   if (error) {
     console.log(`Error while fetching data: ${error.message}`);

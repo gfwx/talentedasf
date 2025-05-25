@@ -56,7 +56,7 @@ export default function Home() {
   };
 
   return (
-    <main className="">
+    <main className="pt-8">
       <section className="mx-8">
         <h1 className="text-4xl font-black tracking-tighter mb-8">
           Talented <i>ASF</i> Athletes
@@ -80,6 +80,7 @@ export default function Home() {
               popularityScore={10}
               athleteSlug={athlete.username}
               id={athlete.id}
+              bio={athlete.bio}
             />
           ))}
         </div>

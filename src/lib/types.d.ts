@@ -7,6 +7,7 @@ export type dataFormat = {
   languages: string;
   highest_level: string;
   photo: string | null;
+  bio: string;
   sponsorship_current: number;
   sponsorship_goal: number;
   username: string;
