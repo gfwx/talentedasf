@@ -22,6 +22,10 @@ import { useState, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { Tables } from "@/lib/database.types";
+
+type Events = Tables<"events">
+
 
 export function ASFCard({
   id,
@@ -97,8 +101,8 @@ export function ASFCard({
           <CardFooter className="flex flex-col items-start gap-2 w-full mt-auto">
             <div>Sponsorship Goal</div>
             <div className="flex justify-between w-full">
-              <div>{sponsorshipCurrent}</div>
-              <div>{sponsorshipGoal}</div>
+              <div>{sponsorshipCurrent}$</div>
+              <div>{sponsorshipGoal}$</div>
             </div>
             <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
               <div
@@ -149,7 +153,7 @@ export function ASFCard({
               <p className="text-gray-700 dark:text-gray-300">
                 {bio || `${fullName} is a ${athleteType} from ${nationality} competing in ${competingSport}.`}
               </p>
-              
+
               <div className="mt-4">
                 <h3 className="font-semibold text-lg mb-2">Details</h3>
                 <div className="grid grid-cols-2 gap-2">
@@ -160,7 +164,7 @@ export function ASFCard({
                 </div>
               </div>
             </div>
-            
+
             <div className="mt-6">
               <Button onClick={handleViewProfile} className="w-full">
                 View Full Profile

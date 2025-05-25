@@ -43,7 +43,7 @@ export default async function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased mx-auto`}
       >
         <ClientProvider>
-          <ASFNav userName={user ? user.user_metadata.name : "Guest"} isLoggedIn={!!user} />
+          <ASFNav userName={user ? user.user_metadata.name : "Guest"} userId={user ? user.id : null} isLoggedIn={!!user} />
           <AthleteProvider initialData={dashboardData}>
             {children}
           </AthleteProvider>

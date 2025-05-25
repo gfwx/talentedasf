@@ -10,6 +10,15 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { CalendarIcon, PlusCircle, Trash2 } from "lucide-react";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 type QuickBio = {
   sport: string;
@@ -33,6 +42,17 @@ type ProfileData = {
   quick_bio: QuickBio;
 };
 
+type EventData = {
+  championship_name: string | null;
+  event_date: string;
+  event_id?: string;
+  event_name: string | null;
+  results: any | null;
+  sport: string | null;
+  uuid?: string;
+  athlete_id?: string;
+};
+
 export default function ProfilePage() {
   const supabase = createClient();
   const router = useRouter();
@@ -40,9 +60,18 @@ export default function ProfilePage() {
   const [profileData, setProfileData] = useState<ProfileData | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [events, setEvents] = useState<EventData[]>([]);
+  const [newEvent, setNewEvent] = useState<EventData>({
+    championship_name: "",
+    event_date: new Date().toISOString(),
+    event_name: "",
+    results: null,
+    sport: "",
+  });
+  const [loadingEvents, setLoadingEvents] = useState(false);
 
   useEffect(() => {
-    async function fetchProfile() {
+    async function fetchProfileAndEvents() {
       setLoading(true);
 
       const { data: { user } } = await supabase.auth.getUser();
@@ -52,6 +81,7 @@ export default function ProfilePage() {
         return;
       }
 
+      // Fetch profile data
       const { data, error } = await supabase
         .from("athletes")
         .select("*")
@@ -74,11 +104,23 @@ export default function ProfilePage() {
 
         setImageUrl(imageData.publicUrl);
       }
+      
+      // Fetch events data
+      const { data: eventsData, error: eventsError } = await supabase
+        .from("events")
+        .select("*")
+        .eq("athlete_id", user.id);
+      
+      if (eventsError) {
+        console.error("Error fetching events:", eventsError);
+      } else {
+        setEvents(eventsData || []);
+      }
 
       setLoading(false);
     }
 
-    fetchProfile();
+    fetchProfileAndEvents();
   }, [supabase]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -105,6 +147,65 @@ export default function ProfilePage() {
     } else {
       setProfileData(prev => prev ? { ...prev, [name]: value } : null);
     }
+  };
+
+  const handleEventInputChange = (field: keyof EventData, value: any) => {
+    setNewEvent(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const handleAddEvent = async () => {
+    if (!profileData) return;
+    
+    setLoadingEvents(true);
+    
+    const eventToAdd = {
+      ...newEvent,
+      athlete_id: profileData.id,
+    };
+    
+    const { data, error } = await supabase
+      .from("events")
+      .insert(eventToAdd)
+      .select();
+      
+    if (error) {
+      toast.error("Failed to add event");
+      console.error("Error adding event:", error);
+    } else {
+      toast.success("Event added successfully");
+      setEvents(prev => [...prev, data[0]]);
+      setNewEvent({
+        championship_name: "",
+        event_date: new Date().toISOString(),
+        event_name: "",
+        results: null,
+        sport: "",
+      });
+    }
+    
+    setLoadingEvents(false);
+  };
+  
+  const handleDeleteEvent = async (eventId: string) => {
+    setLoadingEvents(true);
+    
+    const { error } = await supabase
+      .from("events")
+      .delete()
+      .eq("event_id", eventId);
+      
+    if (error) {
+      toast.error("Failed to delete event");
+      console.error("Error deleting event:", error);
+    } else {
+      toast.success("Event deleted successfully");
+      setEvents(prev => prev.filter(event => event.event_id !== eventId));
+    }
+    
+    setLoadingEvents(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -192,7 +293,9 @@ export default function ProfilePage() {
     <div className="container mx-auto py-10">
       <h1 className="text-3xl font-bold mb-8 text-center">Your Profile</h1>
 
-      <form onSubmit={handleSubmit} className="space-y-8 max-w-3xl mx-auto">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2">
+          <form onSubmit={handleSubmit} className="space-y-8">
         <Card>
           <CardHeader>
             <CardTitle>Profile Picture</CardTitle>
@@ -384,7 +487,124 @@ export default function ProfilePage() {
             {loading ? "Saving..." : "Save Changes"}
           </Button>
         </CardFooter>
-      </form>
+          </form>
+        </div>
+        
+        <div className="lg:col-span-1">
+          <div className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Your Events</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {events.length === 0 ? (
+                  <p className="text-muted-foreground text-center py-4">No events added yet</p>
+                ) : (
+                  <div className="space-y-3">
+                    {events.map((event) => (
+                      <div key={event.event_id} className="border p-3 rounded-md relative">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="absolute top-2 right-2 h-6 w-6"
+                          onClick={() => handleDeleteEvent(event.event_id!)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                        <div className="font-medium">{event.event_name}</div>
+                        <div className="text-sm text-muted-foreground">
+                          {event.championship_name} • {event.sport}
+                        </div>
+                        <div className="text-sm mt-1">
+                          {new Date(event.event_date).toLocaleDateString()}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardHeader>
+                <CardTitle>Add New Event</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="event_name">Event Name</Label>
+                    <Input
+                      id="event_name"
+                      value={newEvent.event_name || ""}
+                      onChange={(e) => handleEventInputChange("event_name", e.target.value)}
+                      placeholder="e.g. 100m Sprint Finals"
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="championship_name">Championship</Label>
+                    <Input
+                      id="championship_name"
+                      value={newEvent.championship_name || ""}
+                      onChange={(e) => handleEventInputChange("championship_name", e.target.value)}
+                      placeholder="e.g. World Athletics Championship"
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="sport">Sport</Label>
+                    <Input
+                      id="sport"
+                      value={newEvent.sport || ""}
+                      onChange={(e) => handleEventInputChange("sport", e.target.value)}
+                      placeholder="e.g. Athletics"
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label>Event Date</Label>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className="w-full justify-start text-left font-normal"
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {newEvent.event_date ? (
+                            format(new Date(newEvent.event_date), "PPP")
+                          ) : (
+                            <span>Pick a date</span>
+                          )}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0">
+                        <Calendar
+                          mode="single"
+                          selected={new Date(newEvent.event_date)}
+                          onSelect={(date) => 
+                            handleEventInputChange("event_date", date?.toISOString() || new Date().toISOString())
+                          }
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+                  
+                  <Button
+                    type="button"
+                    onClick={handleAddEvent}
+                    disabled={loadingEvents || !newEvent.event_name}
+                    className="w-full"
+                  >
+                    {loadingEvents ? "Adding..." : "Add Event"}
+                    {!loadingEvents && <PlusCircle className="ml-2 h-4 w-4" />}
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

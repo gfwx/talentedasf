@@ -16,7 +16,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-function NavComponent({ userName, isLoggedIn }: { userName: string, isLoggedIn: boolean }) {
+function NavComponent({ userName, userId, isLoggedIn }: { userName: string, userId: string | null, isLoggedIn: boolean }) {
   if (!isLoggedIn) {
     return (
       <nav className="w-full flex px-8 py-4 justify-between border-b-2 border-primary">
@@ -42,18 +42,18 @@ function NavComponent({ userName, isLoggedIn }: { userName: string, isLoggedIn: 
             </Avatar>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-56">
-            <DropdownMenuLabel>
-              <Link href="/profile" className="w-full">
-                Profile
-              </Link>
-            </DropdownMenuLabel>
+            <DropdownMenuLabel>Account</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem className="text-gray-400">
-                View Profile
-              </DropdownMenuItem>
-              <DropdownMenuItem className="text-gray-400">
-                Settings
+                <DropdownMenuItem>
+                  <Link href={`/athletes/${userId}`} className="w-full">
+                    View Profile
+                  </Link>
+                </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Link href="/profile" className="w-full">
+                  Edit Profile
+                </Link>
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
@@ -77,7 +77,7 @@ function NavComponent({ userName, isLoggedIn }: { userName: string, isLoggedIn: 
   );
 }
 
-export function ASFNav({ userName, isLoggedIn }: { userName: string; isLoggedIn: boolean }) {
+export function ASFNav({ userName, userId, isLoggedIn }: { userName: string; userId: string | null; isLoggedIn: boolean }) {
   const hiddenRoutes = [
     "/onboarding",
     "/sign-in",
@@ -86,5 +86,5 @@ export function ASFNav({ userName, isLoggedIn }: { userName: string; isLoggedIn:
     "/error",
   ];
 
-  return <NavComponent userName={userName} isLoggedIn={isLoggedIn} />;
+  return <NavComponent userName={userName} userId={userId} isLoggedIn={isLoggedIn} />;
 }
