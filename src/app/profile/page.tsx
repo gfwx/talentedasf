@@ -40,6 +40,7 @@ type ProfileData = {
   highest_level: string;
   photo: string | null;
   sponsorship_current: number;
+  bio: string;
   sponsorship_goal: number;
   username: string;
   quick_bio: QuickBio;
@@ -162,6 +163,11 @@ export default function ProfilePage() {
     } else {
       setProfileData(prev => prev ? { ...prev, [name]: value } : null);
     }
+  };
+  
+  const handleBioChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const { value } = e.target;
+    setProfileData(prev => prev ? { ...prev, bio: value } : null);
   };
 
   const handleEventInputChange = (field: keyof EventData, value: any) => {
@@ -402,6 +408,25 @@ export default function ProfilePage() {
                     name="languages"
                     value={profileData.languages || ""}
                     onChange={handleInputChange}
+                  />
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Biography</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  <Label htmlFor="bio">Tell us about yourself</Label>
+                  <Textarea
+                    id="bio"
+                    name="bio"
+                    value={profileData?.bio || ""}
+                    onChange={handleInputChange}
+                    rows={5}
+                    placeholder="Share your story, achievements, and goals..."
                   />
                 </div>
               </CardContent>
