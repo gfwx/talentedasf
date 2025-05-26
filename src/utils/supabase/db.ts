@@ -15,14 +15,31 @@ const getUsersFromDatabase = async () => {
 
 export const getAthletesFromDatabase = async () => {
   const supabase = await createClient();
-  const { data, error } = await supabase.from("athletes").select("*");
+  const { data: athletes, error: athletesError } = await supabase.from("athletes").select("*");
 
-  if (error) {
-    console.log(`Error while fetching data: ${error.message}`);
+  if (athletesError) {
+    console.log(`Error while fetching athletes data: ${athletesError.message}`);
     return [];
   }
 
-  return data;
+  // Fetch all events
+  const { data: events, error: eventsError } = await supabase.from("events").select("*");
+
+  if (eventsError) {
+    console.log(`Error while fetching events data: ${eventsError.message}`);
+    return athletes; // Return athletes without events if events fetch fails
+  }
+
+  // Assign events to their respective athletes
+  const athletesWithEvents = athletes.map(athlete => {
+    const athleteEvents = events.filter(event => event.athlete_id === athlete.id);
+    return {
+      ...athlete,
+      events: athleteEvents || []
+    };
+  });
+
+  return athletesWithEvents;
 };
 
 export const getCurrentAthleteFromDatabase = async () => {

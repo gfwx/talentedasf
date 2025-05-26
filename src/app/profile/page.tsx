@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { v4 as uuidv4 } from 'uuid';
 import Image from "next/image";
 import { createClient } from "@/utils/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -19,6 +20,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { SocialMediaEditor } from "@/components/ui/tasf_components/SocialMediaLink";
+import { Socials } from "@/lib/types";
 
 type QuickBio = {
   sport: string;
@@ -40,6 +43,7 @@ type ProfileData = {
   sponsorship_goal: number;
   username: string;
   quick_bio: QuickBio;
+  socials?: Socials;
 };
 
 type EventData = {
@@ -69,6 +73,12 @@ export default function ProfilePage() {
     sport: "",
   });
   const [loadingEvents, setLoadingEvents] = useState(false);
+  const [socials, setSocials] = useState<Socials>({
+    instagram: { url: "", follower_count: 0 },
+    twitter: { url: "", follower_count: 0 },
+    facebook: { url: "", follower_count: 0 },
+    youtube: { url: "", follower_count: 0 },
+  });
 
   useEffect(() => {
     async function fetchProfileAndEvents() {
@@ -96,6 +106,11 @@ export default function ProfilePage() {
 
       setProfileData(data);
 
+      // Initialize socials from database if available
+      if (data.socials) {
+        setSocials(data.socials);
+      }
+
       if (data.photo) {
         const { data: imageData } = await supabase
           .storage
@@ -104,13 +119,13 @@ export default function ProfilePage() {
 
         setImageUrl(imageData.publicUrl);
       }
-      
+
       // Fetch events data
       const { data: eventsData, error: eventsError } = await supabase
         .from("events")
         .select("*")
         .eq("athlete_id", user.id);
-      
+
       if (eventsError) {
         console.error("Error fetching events:", eventsError);
       } else {
@@ -158,21 +173,23 @@ export default function ProfilePage() {
 
   const handleAddEvent = async () => {
     if (!profileData) return;
-    
+
     setLoadingEvents(true);
-    
+
     const eventToAdd = {
       ...newEvent,
       athlete_id: profileData.id,
+      event_id: uuidv4()
     };
-    
+
     const { data, error } = await supabase
       .from("events")
       .insert(eventToAdd)
       .select();
-      
+
     if (error) {
       toast.error("Failed to add event");
+      console.log(error);
       console.error("Error adding event:", error);
     } else {
       toast.success("Event added successfully");
@@ -185,18 +202,18 @@ export default function ProfilePage() {
         sport: "",
       });
     }
-    
+
     setLoadingEvents(false);
   };
-  
+
   const handleDeleteEvent = async (eventId: string) => {
     setLoadingEvents(true);
-    
+
     const { error } = await supabase
       .from("events")
       .delete()
       .eq("event_id", eventId);
-      
+
     if (error) {
       toast.error("Failed to delete event");
       console.error("Error deleting event:", error);
@@ -204,7 +221,7 @@ export default function ProfilePage() {
       toast.success("Event deleted successfully");
       setEvents(prev => prev.filter(event => event.event_id !== eventId));
     }
-    
+
     setLoadingEvents(false);
   };
 
@@ -253,6 +270,7 @@ export default function ProfilePage() {
       .update({
         ...profileData,
         photo: photoPath,
+        socials: socials
       })
       .eq("id", profileData.id);
 
@@ -296,200 +314,200 @@ export default function ProfilePage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
           <form onSubmit={handleSubmit} className="space-y-8">
-        <Card>
-          <CardHeader>
-            <CardTitle>Profile Picture</CardTitle>
-          </CardHeader>
-          <CardContent className="flex flex-col items-center gap-4">
-            <div className="relative h-40 w-40 overflow-hidden rounded-full border-4 border-primary">
-              {imageUrl ? (
-                <Image
-                  src={imageUrl}
-                  alt="Profile"
-                  fill
-                  className="object-cover"
-                />
-              ) : (
-                <div className="h-full w-full bg-muted flex items-center justify-center">
-                  <span className="text-muted-foreground">No Image</span>
+            <Card>
+              <CardHeader>
+                <CardTitle>Profile Picture</CardTitle>
+              </CardHeader>
+              <CardContent className="flex flex-col items-center gap-4">
+                <div className="relative h-40 w-40 overflow-hidden rounded-full border-4 border-primary">
+                  {imageUrl ? (
+                    <Image
+                      src={imageUrl}
+                      alt="Profile"
+                      fill
+                      className="object-cover"
+                    />
+                  ) : (
+                    <div className="h-full w-full bg-muted flex items-center justify-center">
+                      <span className="text-muted-foreground">No Image</span>
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
-            <div className="flex items-center gap-2">
-              <Input
-                type="file"
-                id="photo"
-                accept="image/*"
-                onChange={handleImageChange}
-                className="max-w-xs"
-              />
-            </div>
-          </CardContent>
-        </Card>
+                <div className="flex items-center gap-2">
+                  <Input
+                    type="file"
+                    id="photo"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    className="max-w-xs"
+                  />
+                </div>
+              </CardContent>
+            </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Personal Information</CardTitle>
-          </CardHeader>
-          <CardContent className="grid gap-6 md:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="name">Full Name</Label>
-              <Input
-                id="name"
-                name="name"
-                value={profileData.name || ""}
-                onChange={handleInputChange}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="username">Username</Label>
-              <Input
-                id="username"
-                name="username"
-                value={profileData.username || ""}
-                onChange={handleInputChange}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="age">Age</Label>
-              <Input
-                id="age"
-                name="age"
-                value={profileData.age || ""}
-                onChange={handleInputChange}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="gender">Gender</Label>
-              <Input
-                id="gender"
-                name="gender"
-                value={profileData.gender || ""}
-                onChange={handleInputChange}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="nationality">Nationality</Label>
-              <Input
-                id="nationality"
-                name="nationality"
-                value={profileData.nationality || ""}
-                onChange={handleInputChange}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="languages">Languages</Label>
-              <Input
-                id="languages"
-                name="languages"
-                value={profileData.languages || ""}
-                onChange={handleInputChange}
-              />
-            </div>
-          </CardContent>
-        </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>Personal Information</CardTitle>
+              </CardHeader>
+              <CardContent className="grid gap-6 md:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="name">Full Name</Label>
+                  <Input
+                    id="name"
+                    name="name"
+                    value={profileData.name || ""}
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="username">Username</Label>
+                  <Input
+                    id="username"
+                    name="username"
+                    value={profileData.username || ""}
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="age">Age</Label>
+                  <Input
+                    id="age"
+                    name="age"
+                    value={profileData.age || ""}
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="gender">Gender</Label>
+                  <Input
+                    id="gender"
+                    name="gender"
+                    value={profileData.gender || ""}
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="nationality">Nationality</Label>
+                  <Input
+                    id="nationality"
+                    name="nationality"
+                    value={profileData.nationality || ""}
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="languages">Languages</Label>
+                  <Input
+                    id="languages"
+                    name="languages"
+                    value={profileData.languages || ""}
+                    onChange={handleInputChange}
+                  />
+                </div>
+              </CardContent>
+            </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Athletic Information</CardTitle>
-          </CardHeader>
-          <CardContent className="grid gap-6 md:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="quick_bio.sport">Sport</Label>
-              <Input
-                id="quick_bio.sport"
-                name="quick_bio.sport"
-                value={profileData.quick_bio?.sport || ""}
-                onChange={handleInputChange}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="quick_bio.experience">Experience (years)</Label>
-              <Input
-                id="quick_bio.experience"
-                name="quick_bio.experience"
-                value={profileData.quick_bio?.experience || ""}
-                onChange={handleInputChange}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="quick_bio.level">Current Level</Label>
-              <Input
-                id="quick_bio.level"
-                name="quick_bio.level"
-                value={profileData.quick_bio?.level || ""}
-                onChange={handleInputChange}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="highest_level">Highest Level Achieved</Label>
-              <Input
-                id="highest_level"
-                name="highest_level"
-                value={profileData.highest_level || ""}
-                onChange={handleInputChange}
-              />
-            </div>
-            <div className="space-y-2 md:col-span-2">
-              <Label htmlFor="quick_bio.other_activity">Other Activities</Label>
-              <Textarea
-                id="quick_bio.other_activity"
-                name="quick_bio.other_activity"
-                value={profileData.quick_bio?.other_activity || ""}
-                onChange={handleInputChange}
-                rows={3}
-              />
-            </div>
-          </CardContent>
-        </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>Athletic Information</CardTitle>
+              </CardHeader>
+              <CardContent className="grid gap-6 md:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="quick_bio.sport">Sport</Label>
+                  <Input
+                    id="quick_bio.sport"
+                    name="quick_bio.sport"
+                    value={profileData.quick_bio?.sport || ""}
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="quick_bio.experience">Experience (years)</Label>
+                  <Input
+                    id="quick_bio.experience"
+                    name="quick_bio.experience"
+                    value={profileData.quick_bio?.experience || ""}
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="quick_bio.level">Current Level</Label>
+                  <Input
+                    id="quick_bio.level"
+                    name="quick_bio.level"
+                    value={profileData.quick_bio?.level || ""}
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="highest_level">Highest Level Achieved</Label>
+                  <Input
+                    id="highest_level"
+                    name="highest_level"
+                    value={profileData.highest_level || ""}
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div className="space-y-2 md:col-span-2">
+                  <Label htmlFor="quick_bio.other_activity">Other Activities</Label>
+                  <Textarea
+                    id="quick_bio.other_activity"
+                    name="quick_bio.other_activity"
+                    value={profileData.quick_bio?.other_activity || ""}
+                    onChange={handleInputChange}
+                    rows={3}
+                  />
+                </div>
+              </CardContent>
+            </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Sponsorship Goals</CardTitle>
-          </CardHeader>
-          <CardContent className="grid gap-6 md:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="sponsorship_current">Current Sponsorship Amount</Label>
-              <Input
-                id="sponsorship_current"
-                name="sponsorship_current"
-                type="number"
-                value={profileData.sponsorship_current || 0}
-                onChange={handleInputChange}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="sponsorship_goal">Sponsorship Goal</Label>
-              <Input
-                id="sponsorship_goal"
-                name="sponsorship_goal"
-                type="number"
-                value={profileData.sponsorship_goal || 0}
-                onChange={handleInputChange}
-              />
-            </div>
-            <div className="md:col-span-2 space-y-2">
-              <div>Progress</div>
-              <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-primary"
-                  style={{
-                    width: `${Math.min(100, ((profileData.sponsorship_current || 0) / (profileData.sponsorship_goal || 1)) * 100)}%`
-                  }}
-                ></div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>Sponsorship Goals</CardTitle>
+              </CardHeader>
+              <CardContent className="grid gap-6 md:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="sponsorship_current">Current Sponsorship Amount</Label>
+                  <Input
+                    id="sponsorship_current"
+                    name="sponsorship_current"
+                    type="number"
+                    value={profileData.sponsorship_current || 0}
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="sponsorship_goal">Sponsorship Goal</Label>
+                  <Input
+                    id="sponsorship_goal"
+                    name="sponsorship_goal"
+                    type="number"
+                    value={profileData.sponsorship_goal || 0}
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div className="md:col-span-2 space-y-2">
+                  <div>Progress</div>
+                  <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-primary"
+                      style={{
+                        width: `${Math.min(100, ((profileData.sponsorship_current || 0) / (profileData.sponsorship_goal || 1)) * 100)}%`
+                      }}
+                    ></div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
 
-        <CardFooter className="flex justify-end gap-2">
-          <Button type="submit" disabled={loading}>
-            {loading ? "Saving..." : "Save Changes"}
-          </Button>
-        </CardFooter>
+            <CardFooter className="flex justify-end gap-2">
+              <Button type="submit" disabled={loading}>
+                {loading ? "Saving..." : "Save Changes"}
+              </Button>
+            </CardFooter>
           </form>
         </div>
-        
+
         <div className="lg:col-span-1">
           <div className="space-y-6">
             <Card>
@@ -524,7 +542,7 @@ export default function ProfilePage() {
                 )}
               </CardContent>
             </Card>
-            
+
             <Card>
               <CardHeader>
                 <CardTitle>Add New Event</CardTitle>
@@ -600,6 +618,18 @@ export default function ProfilePage() {
                     {!loadingEvents && <PlusCircle className="ml-2 h-4 w-4" />}
                   </Button>
                 </div>
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardHeader>
+                <CardTitle>Social Media Links</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <SocialMediaEditor 
+                  socials={socials} 
+                  onChange={(updatedSocials) => setSocials(updatedSocials)} 
+                />
               </CardContent>
             </Card>
           </div>

@@ -22,9 +22,8 @@ import { useState, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Tables } from "@/lib/database.types";
-
-type Events = Tables<"events">
+import { EventData } from "@/lib/types";
+import { ASFCardEvent } from "./ASFCardEvent";
 
 
 export function ASFCard({
@@ -39,6 +38,7 @@ export function ASFCard({
   popularityScore,
   athleteSlug,
   bio,
+  events,
 }: {
   id: string;
   fullName: string;
@@ -50,7 +50,8 @@ export function ASFCard({
   nationality: string;
   popularityScore: number;
   athleteSlug: string;
-  bio: string
+  bio: string;
+  events?: EventData[];
 }) {
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -162,6 +163,11 @@ export function ASFCard({
                   <div className="text-gray-500 dark:text-gray-400">Popularity:</div>
                   <div>{popularityScore}/10</div>
                 </div>
+              </div>
+
+              <div className="mt-4">
+                <h3 className="font-semibold text-lg mb-2">Events</h3>
+                <ASFCardEvent events={events || []} />
               </div>
             </div>
 

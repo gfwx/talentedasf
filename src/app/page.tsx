@@ -81,6 +81,7 @@ export default function Home() {
               athleteSlug={athlete.username}
               id={athlete.id}
               bio={athlete.bio}
+              events={athlete.events}
             />
           ))}
         </div>

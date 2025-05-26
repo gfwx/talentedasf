@@ -1,3 +1,14 @@
+export type EventData = {
+  championship_name: string | null;
+  event_date: string;
+  event_id: string;
+  event_name: string | null;
+  results: any | null;
+  sport: string | null;
+  uuid: string;
+  athlete_id: string;
+};
+
 export type dataFormat = {
   id: string;
   name: string;
@@ -17,6 +28,8 @@ export type dataFormat = {
     level: string;
     other_activity: string;
   };
+  events?: EventData[];
+  socials?: Socials;
 };
 
 export type OnboardingFormData = {
@@ -35,4 +48,23 @@ export type OnboardingFormData = {
   sponsorship_goal: number;
   username: string;
   bio: string;
+};
+
+export type Socials = {
+  instagram: {
+    url: string,
+    follower_count: number,
+  }
+  twitter: {
+    url: string,
+    follower_count: number,
+  }
+  facebook: {
+    url: string,
+    follower_count: number,
+  }
+  youtube: {
+    url: string,
+    follower_count: number,
+  }
 };

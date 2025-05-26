@@ -70,36 +70,36 @@ export type Database = {
       }
       events: {
         Row: {
+          athlete_id: string
           championship_name: string | null
           event_date: string
           event_id: string
           event_name: string | null
           results: Json | null
           sport: string | null
-          uuid: string
         }
         Insert: {
+          athlete_id: string
           championship_name?: string | null
           event_date: string
           event_id: string
           event_name?: string | null
           results?: Json | null
           sport?: string | null
-          uuid: string
         }
         Update: {
+          athlete_id?: string
           championship_name?: string | null
           event_date?: string
           event_id?: string
           event_name?: string | null
           results?: Json | null
           sport?: string | null
-          uuid?: string
         }
         Relationships: [
           {
             foreignKeyName: "events_uuid_fkey"
-            columns: ["uuid"]
+            columns: ["athlete_id"]
             isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
