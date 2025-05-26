@@ -11,7 +11,6 @@ import { useState } from "react";
 
 export default function Home() {
   const data = useAthleteData();
-  console.log(data);
   const [filters, setFilters] = useState<FilterState>({
     nationality: "all",
     sponsorshipRange: "all",

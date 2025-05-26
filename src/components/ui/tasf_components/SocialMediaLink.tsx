@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Instagram, Twitter, Facebook, Youtube } from "lucide-react";
 import { Socials } from "@/lib/types";
 import { Badge } from "@/components/ui/badge";
-import Link from "next/link";
+
 import { formatNumber } from "@/lib/utils";
 
 type SocialMediaProps = {
@@ -41,13 +41,14 @@ export function SocialMediaLink({
     <div className={`flex items-center gap-3 ${className}`}>
       {socials.instagram?.url && (
         <div className="flex items-center gap-1">
-          <Link
-            href={`https://${socials.instagram.url}`}
+          <a
+            href={socials.instagram.url.startsWith('http') ? socials.instagram.url : `https://${socials.instagram.url}`}
             target="_blank"
+            rel="noopener noreferrer"
             className="text-pink-600 hover:text-pink-700 transition-colors"
           >
             <Instagram size={iconSize} />
-          </Link>
+          </a>
           {showFollowerCount && socials.instagram.follower_count > 0 && (
             <Badge variant="outline" className={badgeSize}>
               {formatNumber(socials.instagram.follower_count)}
@@ -58,14 +59,14 @@ export function SocialMediaLink({
 
       {socials.twitter?.url && (
         <div className="flex items-center gap-1">
-          <Link
-            href={`https://${socials.twitter.url}`}
+          <a
+            href={socials.twitter.url.startsWith('http') ? socials.twitter.url : `https://${socials.twitter.url}`}
             target="_blank"
             rel="noopener noreferrer"
             className="text-blue-400 hover:text-blue-500 transition-colors"
           >
             <Twitter size={iconSize} />
-          </Link>
+          </a>
           {showFollowerCount && socials.twitter.follower_count > 0 && (
             <Badge variant="outline" className={badgeSize}>
               {formatNumber(socials.twitter.follower_count)}
@@ -76,14 +77,14 @@ export function SocialMediaLink({
 
       {socials.facebook?.url && (
         <div className="flex items-center gap-1">
-          <Link
-            href={`https://${socials.facebook.url}`}
+          <a
+            href={socials.facebook.url.startsWith('http') ? socials.facebook.url : `https://${socials.facebook.url}`}
             target="_blank"
             rel="noopener noreferrer"
             className="text-blue-600 hover:text-blue-700 transition-colors"
           >
             <Facebook size={iconSize} />
-          </Link >
+          </a>
           {showFollowerCount && socials.facebook.follower_count > 0 && (
             <Badge variant="outline" className={badgeSize}>
               {formatNumber(socials.facebook.follower_count)}
@@ -94,14 +95,14 @@ export function SocialMediaLink({
 
       {socials.youtube?.url && (
         <div className="flex items-center gap-1">
-          <Link
-            href={`https://${socials.youtube.url}`}
+          <a
+            href={socials.youtube.url.startsWith('http') ? socials.youtube.url : `https://${socials.youtube.url}`}
             target="_blank"
             rel="noopener noreferrer"
             className="text-red-600 hover:text-red-700 transition-colors"
           >
             <Youtube size={iconSize} />
-          </Link>
+          </a>
           {showFollowerCount && socials.youtube.follower_count > 0 && (
             <Badge variant="outline" className={badgeSize}>
               {formatNumber(socials.youtube.follower_count)}

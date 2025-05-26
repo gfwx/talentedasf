@@ -1,34 +1,28 @@
 import Image from "next/image";
-import { createClient } from "@/utils/supabase/server";
-import { dataFormat, EventData, Socials } from "@/lib/types";
-import { Calendar } from "lucide-react";
+import { dataFormat } from "@/lib/types";
 import { ASFCardEvent } from "@/components/ui/tasf_components/ASFCardEvent";
 import { SocialMediaLink } from "@/components/ui/tasf_components/SocialMediaLink";
+import { Metadata, ResolvingMetadata } from "next/types";
+import { getAthleteData, generateAthleteMetadata } from "./data";
 
 type PageProps = {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 };
 
+export async function generateMetadata(
+  { params }: PageProps,
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  const { slug } = await params;
+  return generateAthleteMetadata(slug);
+}
+
 export default async function AthletePage({ params }: PageProps) {
-  const supabase = await createClient();
-  const { slug } = params;
+  const { slug } = await params;
+  const { athlete, events } = await getAthleteData(slug);
 
-  const { data, error } = await supabase
-    .from("athletes")
-    .select("*")
-    .eq("id", slug)
-    .single();
+  if (!athlete) return <div>Athlete not found</div>;
 
-  if (error || !data) return <div>Athlete not found</div>;
-
-  // Fetch events for this athlete
-  const { data: eventsData, error: eventsError } = await supabase
-    .from("events")
-    .select("*")
-    .eq("athlete_id", slug);
-
-  const events: EventData[] = eventsError ? [] : eventsData || [];
-  const athlete: dataFormat = { ...data, events };
   const imgUrl = `https://eyluvqxrqfihmhxojklw.supabase.co/storage/v1/object/public/pfp/${athlete.photo}`;
 
   return (
